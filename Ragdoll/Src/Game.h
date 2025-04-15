@@ -1,8 +1,10 @@
 #pragma once
+#include <list>
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include "SFMLRenderer.h"
-#include <list>
+#include "RagDoll.h"
+#include "Cannon.h"
 
 using namespace sf;
 class Game
@@ -22,8 +24,8 @@ private:
 	float frameTime;
 	int fps;
 
-	// Cuerpo de box2d
-	b2Body* controlBody;
+	Cannon cannon;
+	std::vector<RagDoll*> ragdolls;
 
 public:
 

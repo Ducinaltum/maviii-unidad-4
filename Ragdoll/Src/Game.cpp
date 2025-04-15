@@ -2,7 +2,9 @@
 #include "Box2DHelper.h"
 #include <iostream>
 
-Game::Game(int ancho, int alto, std::string titulo)
+
+Game::Game(int ancho, int alto, std::string titulo) :
+	cannon()
 {
 	wnd = new RenderWindow(VideoMode(ancho, alto), titulo);
 	wnd->setVisible(true);
@@ -11,6 +13,7 @@ Game::Game(int ancho, int alto, std::string titulo)
 	frameTime = 1.0f / fps;
 	SetZoom(100.0f, (float)ancho / (float)alto);
 	InitPhysics();
+	
 }
 
 void Game::SetZoom(float height, float ratio)
@@ -30,18 +33,16 @@ void Game::InitPhysics()
 	debugRender->SetFlags(UINT_MAX);
 	phyWorld->SetDebugDraw(debugRender);
 
+	float wndWidth = wnd->getView().getSize().x;
 
-	b2Body* groundBody = Box2DHelper::CreateRectangularStaticBody(phyWorld, 100, 10);
-	groundBody->SetTransform(b2Vec2(50.0f, 100.0f), 0.0f);
+	b2Body* groundBody = Box2DHelper::CreateRectangularStaticBody(phyWorld, wndWidth, 10);
+	groundBody->SetTransform(b2Vec2(wndWidth / 2, 100.0f), 0.0f);
 
 	b2Body* leftWallBody = Box2DHelper::CreateRectangularStaticBody(phyWorld, 10, 100);
 	leftWallBody->SetTransform(b2Vec2(0.0f, 50.0f), 0.0f);
 
 	b2Body* rightWallBody = Box2DHelper::CreateRectangularStaticBody(phyWorld, 10, 100);
-	rightWallBody->SetTransform(b2Vec2(100.0f, 50.0f), 0.0f);
-
-	controlBody = Box2DHelper::CreateCircularDynamicBody(phyWorld, 5, 1.0f, 0.5, 0.1f);
-	controlBody->SetTransform(b2Vec2(50.0f, 50.0f), 0.0f);
+	rightWallBody->SetTransform(b2Vec2(wndWidth, 50.0f), 0.0f);
 }
 
 
@@ -69,27 +70,12 @@ void Game::DoEvents()
 			wnd->close();
 			break;
 		case Event::MouseButtonPressed:
-			// Crear un cuerpo dinámico triangular en la posición del ratón
-			b2Body* body = Box2DHelper::CreateTriangularDynamicBody(phyWorld, b2Vec2(0.0f, 0.0f), 10.0f, 1.0f, 4.0f, 0.1f);
-			// Transformar las coordenadas según la vista activa
 			Vector2f pos = wnd->mapPixelToCoords(Vector2i(evt.mouseButton.x, evt.mouseButton.y));
-			body->SetTransform(b2Vec2(pos.x, pos.y), 0.0f);
+			RagDoll * ragdoll = new RagDoll(phyWorld, b2Vec2(b2Vec2(pos.x, pos.y)), 2);
+			ragdolls.push_back(ragdoll);
 			break;
 		}
 	}
-
-	// Controlar el movimiento del cuerpo de control con el teclado
-	// Segun la numeracion usada, cuando mas cerca de cero mas 
-	// lento es el desplazamiento sobre ese eje
-	controlBody->SetAwake(true);
-	if (Keyboard::isKeyPressed(Keyboard::Left))
-		controlBody->SetLinearVelocity(b2Vec2(-30.0f, 0.0f));
-	if (Keyboard::isKeyPressed(Keyboard::Right))
-		controlBody->SetLinearVelocity(b2Vec2(30.0f, 0.0f));
-	if (Keyboard::isKeyPressed(Keyboard::Down))
-		controlBody->SetLinearVelocity(b2Vec2(0.0f, 30.0f));
-	if (Keyboard::isKeyPressed(Keyboard::Up))
-		controlBody->SetLinearVelocity(b2Vec2(0.0f, -30.0f));
 }
 
 void Game::CheckCollitions()
@@ -106,6 +92,7 @@ void Game::UpdatePhysics()
 
 void Game::DrawGame()
 {
+	/*
 	// Dibujar el suelo
 	sf::RectangleShape groundShape(sf::Vector2f(500, 5));
 	groundShape.setFillColor(sf::Color::Red);
@@ -128,6 +115,7 @@ void Game::DrawGame()
 	controlShape.setFillColor(sf::Color::Magenta);
 	controlShape.setPosition(controlBody->GetPosition().x - 5, controlBody->GetPosition().y - 5);
 	wnd->draw(controlShape);
+	*/
 }
 
 Game::~Game(void) {}
