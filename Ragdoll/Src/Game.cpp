@@ -4,7 +4,8 @@
 
 
 Game::Game(int ancho, int alto, std::string titulo) :
-	cannon()
+	cannon(sf::Vector2f(10, 90)),
+	m_mousePos(0, 0)
 {
 	wnd = new RenderWindow(VideoMode(ancho, alto), titulo);
 	wnd->setVisible(true);
@@ -13,7 +14,7 @@ Game::Game(int ancho, int alto, std::string titulo) :
 	frameTime = 1.0f / fps;
 	SetZoom(100.0f, (float)ancho / (float)alto);
 	InitPhysics();
-	
+
 }
 
 void Game::SetZoom(float height, float ratio)
@@ -61,6 +62,9 @@ void Game::Loop()
 
 void Game::DoEvents()
 {
+	Vector2f position = wnd->mapPixelToCoords(sf::Mouse::getPosition(*wnd));
+	m_mousePos.x = position.x;
+	m_mousePos.y = position.y;
 	Event evt;
 	while (wnd->pollEvent(evt))
 	{
@@ -70,9 +74,11 @@ void Game::DoEvents()
 			wnd->close();
 			break;
 		case Event::MouseButtonPressed:
-			Vector2f pos = wnd->mapPixelToCoords(Vector2i(evt.mouseButton.x, evt.mouseButton.y));
-			RagDoll * ragdoll = new RagDoll(phyWorld, b2Vec2(b2Vec2(pos.x, pos.y)), 2);
+			//Vector2f pos = wnd->mapPixelToCoords(Vector2i(evt.mouseButton.x, evt.mouseButton.y));
+			//RagDoll* ragdoll = new RagDoll(phyWorld, b2Vec2(pos.x, pos.y), 2);
+			RagDoll* ragdoll = new RagDoll(phyWorld, m_mousePos, 1);
 			ragdolls.push_back(ragdoll);
+
 			break;
 		}
 	}
@@ -88,6 +94,7 @@ void Game::UpdatePhysics()
 	phyWorld->Step(frameTime, 8, 8);
 	phyWorld->ClearForces();
 	phyWorld->DebugDraw();
+	cannon.Update(m_mousePos);
 }
 
 void Game::DrawGame()
@@ -116,6 +123,7 @@ void Game::DrawGame()
 	controlShape.setPosition(controlBody->GetPosition().x - 5, controlBody->GetPosition().y - 5);
 	wnd->draw(controlShape);
 	*/
+	cannon.Draw(wnd);
 }
 
 Game::~Game(void) {}

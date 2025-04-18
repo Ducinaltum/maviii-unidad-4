@@ -19,6 +19,7 @@ private:
 	// Objetos de box2d
 	b2World *phyWorld;
 	SFMLRenderer *debugRender;
+	b2Vec2 m_mousePos;
 
 	//tiempo de frame
 	float frameTime;
