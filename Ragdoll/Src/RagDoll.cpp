@@ -10,8 +10,8 @@ RagDoll::RagDoll(b2World* world, b2Vec2 spawnPosition, float scale)
 	float restitution = 0.5f;
 	b2Vec2 torsoPosition(0, 0);
 	b2Vec2 headPosition(0, -3.1f);
-	b2Vec2 l_armPosition(-2, 0);
-	b2Vec2 r_armPosition(2, 0);
+	b2Vec2 l_armPosition(-1.1, 0);
+	b2Vec2 r_armPosition(1.1, 0);
 	b2Vec2 l_legPosition(-1, 4.1f);
 	b2Vec2 r_legPosition(1, 4.1f);
 
