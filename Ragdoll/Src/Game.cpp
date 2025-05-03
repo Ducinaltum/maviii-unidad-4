@@ -39,11 +39,34 @@ void Game::InitPhysics()
 	b2Body* groundBody = Box2DHelper::CreateRectangularStaticBody(phyWorld, wndWidth, 10);
 	groundBody->SetTransform(b2Vec2(wndWidth / 2, 100.0f), 0.0f);
 
+	b2Body* ceilingVody = Box2DHelper::CreateRectangularStaticBody(phyWorld, wndWidth, 10);
+	ceilingVody->SetTransform(b2Vec2(wndWidth / 2, 0.0f), 0.0f);
+
 	b2Body* leftWallBody = Box2DHelper::CreateRectangularStaticBody(phyWorld, 10, 100);
 	leftWallBody->SetTransform(b2Vec2(0.0f, 50.0f), 0.0f);
 
 	b2Body* rightWallBody = Box2DHelper::CreateRectangularStaticBody(phyWorld, 10, 100);
 	rightWallBody->SetTransform(b2Vec2(wndWidth, 50.0f), 0.0f);
+
+
+	b2Body* staticObstacle1 = Box2DHelper::CreateRectangularStaticBody(phyWorld, 20, 10);
+	staticObstacle1->SetTransform(b2Vec2(wndWidth / 2, 50.0f), 0.0f);
+
+	b2Body* staticObstacle2 = Box2DHelper::CreateRectangularStaticBody(phyWorld, 20, 10);
+	staticObstacle2->SetTransform(b2Vec2((wndWidth / 4) * 3, 40.0f), 0.0f);
+
+	b2Body* staticObstacle3 = Box2DHelper::CreateRectangularStaticBody(phyWorld, 20, 20);
+	staticObstacle3->SetTransform(b2Vec2((wndWidth / 5) * 4, 70.0f), 0.0f);
+
+
+	b2Body* dynamicObstacle1 = Box2DHelper::CreateRectangularDynamicBody(phyWorld, 5, 15, 1.0f, 1.0f, 1.0f);
+	dynamicObstacle1->SetTransform(b2Vec2((wndWidth / 4) * 3, 30.0f), 0.0f);
+
+	b2Body* dynamicObstacle2 = Box2DHelper::CreateCircularDynamicBody(phyWorld, 2.5f, 1.0f, 1.0f, 1.0f);
+	dynamicObstacle2->SetTransform(b2Vec2((wndWidth / 4) * 3, 20.0f), 0.0f);
+
+	b2Body* dynamicObstacle3 =  Box2DHelper::CreateCircularDynamicBody(phyWorld, 5, 1.0f, 1.0f, 1.0f);
+	dynamicObstacle3->SetTransform(b2Vec2(wndWidth / 2, 45.0f), 0.0f);
 }
 
 
@@ -74,9 +97,12 @@ void Game::DoEvents()
 			wnd->close();
 			break;
 		case Event::MouseButtonPressed:
-			//Vector2f pos = wnd->mapPixelToCoords(Vector2i(evt.mouseButton.x, evt.mouseButton.y));
-			//RagDoll* ragdoll = new RagDoll(phyWorld, b2Vec2(pos.x, pos.y), 2);
-			RagDoll* ragdoll = new RagDoll(phyWorld, m_mousePos, 1);
+			b2Vec2 direction = m_mousePos - cannon.GetPosition();
+			if (direction.x < 0) direction.x = 0;
+			if (direction.y > 0) direction.y = 0;
+			//float strength = direction.Length();
+			RagDoll* ragdoll = new RagDoll(phyWorld, cannon.GetProjectileExitPosition(), 1);
+			ragdoll->ApplyForce(direction);
 			ragdolls.push_back(ragdoll);
 
 			break;

@@ -4,6 +4,7 @@
 
 RagDoll::RagDoll(b2World* world, b2Vec2 spawnPosition, float scale)
 {
+	m_force = 30;
 	float density = 1.0f;
 	float friction = 0.5f;
 	float restitution = 0.5f;
@@ -94,4 +95,9 @@ RagDoll::RagDoll(b2World* world, b2Vec2 spawnPosition, float scale)
 	r_LegTorsoJointDef.length = (r_LegAnchor - torsoRLegAnchor).Length();
 	r_LegTorsoJointDef.collideConnected = true;
 	world->CreateJoint(&r_LegTorsoJointDef);
+}
+
+void RagDoll::ApplyForce(b2Vec2 force)
+{
+	torso->ApplyLinearImpulseToCenter(m_force * force, true);
 }

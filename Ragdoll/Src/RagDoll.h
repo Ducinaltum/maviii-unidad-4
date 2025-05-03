@@ -11,7 +11,9 @@ private:
 	b2Body* r_Leg;
 	b2Body* l_arm;
 	b2Body* r_arm;
+	float m_force;
 public:
 	RagDoll(b2World* world, b2Vec2 spawnPosition, float scale = 1);
+	void ApplyForce(b2Vec2 force);
 };
 
